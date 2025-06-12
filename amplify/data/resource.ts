@@ -9,9 +9,10 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Todo: a
     .model({
-      content: a.string(),
+        content: a.string(),
+        isDone: a.boolean() 
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+      .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -36,13 +37,13 @@ Actions or Pages Router? Review how to generate Data clients for those use
 cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
 
-/*
-"use client"
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+const client = generateClient<Schema>({
+    authMode: ''
+}); // use this Data client for CRUDL requests
 
-const client = generateClient<Schema>() // use this Data client for CRUDL requests
-*/
+const fetchTodos = async () => {
+    const { data: todos, errors } = await client.models.Todo.list();
+};
 
 /*== STEP 3 ===============================================================
 Fetch records from the database and use them in your frontend component.
@@ -51,6 +52,6 @@ Fetch records from the database and use them in your frontend component.
 
 /* For example, in a React component, you can use this snippet in your
   function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
+const { data: todos } = await client.models.Todo.list()
 
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
+return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
